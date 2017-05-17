@@ -3,6 +3,8 @@
   
   Terminal's db is composed of memory and disk, the index will load into memory and the dat will store in disk, so it can save much memory. The data file name dat,and the index file name idx. The idx file is composed of many key-pos pairs. In version 1.0 the key only support integer,we will support string key in the new version.
 
+  this is base on [lushan](https://github.com/wbrecom/lushan)
+
 # Quickstart and Try
 ## Compile
 ### Dependencies
