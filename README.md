@@ -1,5 +1,6 @@
-# Introduction
+# Introduction [中文](https://github.com/desion/terminal/blob/master/README_CN.md)
   Terminal is a persistent huge storage service , compatible with the majority of memcached interfaces (get,stats). With the huge amount of data stored,  Except huge storage capacity, Terminal also support load huge data one time, it can load many db and append data to the existed db, when there is the same key in the new version and old version Terminal will return the value with new version. Terminal is very useful for the recommend system.
+  
   Terminal's db is composed of memory and disk, the index will load into memory and the dat will store in disk, so it can save much memory. The data file name dat,and the index file name idx. The idx file is composed of many key-pos pairs. In version 1.0 the key only support integer,we will support string key in the new version.
 
 # Quickstart and Try
@@ -9,10 +10,8 @@
 ### Start Compile
     1. git clone https://github.com/desion/terminal.git
     2. Compile
-       ```
        cd terminal
        make
-       ```
 ## Useage
    1. start Terminal
       ```

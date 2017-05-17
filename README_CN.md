@@ -11,10 +11,8 @@
 ### 开始编译
     1. git clone https://github.com/desion/terminal.git
     2. 编译
-       #+BEGIN_EXAMPLE
        cd terminal
        make
-       #+END_EXAMPLE
 ## 使用
    1. 启动
       ```
