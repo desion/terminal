@@ -6,6 +6,17 @@
   this is base on [lushan](https://github.com/wbrecom/lushan)
 
 # Quickstart and Try
+
+## Dashboard
+   you can use the dashboard to manage the Terminal
+   1. update the configure file in terminal/web/conf.py
+      specify the host, port and the server tag
+   2. start the dashboard server (Dependencies tornado, you can install it use pip install tornado)
+      ```
+      python http_server.py <port>
+      ```
+   3. then you can visit dashboard and use it to manage the Terminal
+      ![image](https://github.com/desion/terminal/raw/master/screenshots/terminal_dash.png)
 ## Compile
 ### Dependencies
     - libevent1.4
@@ -14,6 +25,7 @@
     2. Compile
        cd terminal
        make
+
 ## Useage
    1. start Terminal
       ```

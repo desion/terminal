@@ -5,6 +5,16 @@
   terminal的每个库由数据文件和索引文件组成, 数据文件命名为dat, 索引文件命名为idx,  索引文件由一个个key-pos对组成. 其中key就是key-value结构中需要查询的key(1.0版本现在只支持整数类型的key, 后续会支持字符串类型的key), 而pos则包含两部分信息, 它的前40位表示value在dat文件中的偏离值off, 后20位表示value的长度length, 通过off和length来共同定位dat文件中的value
 
 # 使用方法
+
+## 管理控制台
+   1. 修改配置文件 terminal/web/conf.py
+      指定每个server的host, port 还有标记server的tag
+   2. 启动控制台的http server(依赖于 tornado, 你可以使用pip install tornado 来安装它)
+      ```
+      python http_server.py <port>
+      ```
+   3. 现在你就可以通过控制台来查看服务的状态，并且在上面管理每个db服务了
+      ![image](https://github.com/desion/terminal/raw/master/screenshots/terminal_dash.png)
 ## 源码编译
 ### 依赖的第三方源码包
     - libevent1.4
