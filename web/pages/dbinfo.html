@@ -27,6 +27,10 @@
 </head>
 
 <body class="hold-transition skin-black sidebar-mini">
+    <div id="alert" class="callout callout-danger" style="display:none;">
+       <h4>Error message!</h4>
+       <p>There is a problem when download video please try again!</p>
+    </div> 
     <div class="modal fade" tabindex="-1" role="dialog" id="open_dialog" aria-labelledby="gridSystemModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -278,10 +282,16 @@
             async: false,
             type:'post',  
             success:function(data) { 
-                alert(data);
+                var status = $.parseJSON(data); 
+                if(status.err_code == 0){
+                    alert("operate success!");
+                    location.reload();
+                }else{
+                    alert("operate fail!");
+                }
              },  
              error : function() {
-
+                alert("operate fail!");
              }  
         });
     }
@@ -302,10 +312,16 @@
             async: false,
             type:'post',  
             success:function(data) { 
-                alert(data);
+                var status = $.parseJSON(data); 
+                if(status.err_code == 0){
+                    alert("close success!");
+                    location.reload();
+                }else{
+                    alert("close fail!");
+                }
              },  
              error : function() {
-
+                alert("close fail!");
              }  
         });
     }
