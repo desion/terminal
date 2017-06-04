@@ -18,7 +18,7 @@ typedef struct {
 typedef struct {
     uint32_t version;       //the version of idx
     uint8_t idx_type;       //the type of idx,binary search of hash
-    char label[21];         //the name of db
+    char label[24];         //the name of db
 } meta_t;
 
 typedef struct hdict_t hdict_t;
@@ -58,9 +58,10 @@ struct hdb_t {
 hdict_t* hdict_open(const char *path, int *hdict_errnop);
 
 #define HDICT_VALUE_LENGTH_MAX 204800
-int hdict_seek(hdict_t *hdict, uint64_t key, off_t *off, uint32_t *length);
+int hdict_seek(hdict_t *hdict, const char* key, off_t *off, uint32_t *length);
+int hdict_seek_v2(hdict_t *hdict, const char* key, off_t *off, uint32_t *length);
 
-int hdict_search(hdb_t *hdb, const char* label, uint64_t key, off_t *off, uint32_t *length, hdict_t **hdict);
+int hdict_search(hdb_t *hdb, const char* label, const char* key, off_t *off, uint32_t *length, hdict_t **hdict);
 
 int hdict_randomkey(hdict_t *hdict, uint64_t *key);
 

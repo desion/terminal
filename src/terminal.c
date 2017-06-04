@@ -282,7 +282,7 @@ static void* worker(void *arg)
             char token[251];
             char label[21];
             int next;
-            uint64_t key;
+            //uint64_t key;
             off_t off;
             uint32_t length;
             c->wbytes = 0;
@@ -294,15 +294,17 @@ static void* worker(void *arg)
                 STATS_LOCK(stats);
                 stats.get_cmds++;
                 STATS_UNLOCK(stats);
-
+                char *str_key;
                 if ((en_dash = strchr(token, '-')) == NULL) {
-                    key = strtoull(token, NULL, 10);
+                    //key = strtoull(token, NULL, 10);
+                    str_key = token;
                 } else {
                     *en_dash = '\0';
                     strcpy(label, token);
-                    key = strtoull(en_dash+1, NULL, 10);
+                    //key = strtoull(en_dash+1, NULL, 10);
+                    str_key = en_dash+1;
                 }
-                if (hdict_search(hdb, label, key, &off, &length, &hdict)) {
+                if (hdict_search(hdb, label, str_key, &off, &length, &hdict)) {
                     STATS_LOCK(stats);
                     stats.get_hits++;
                     STATS_UNLOCK(stats);

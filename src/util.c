@@ -37,3 +37,23 @@ void out_string(conn *c, const char *str) {
     return;
 }
 
+static int isprime(int m) {
+    if (m < 1)
+        return 0;
+    int i;
+    for (i = 2; i < m; i++) {
+        if (m % i == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int bigger_prime(int m){
+    int i;
+    for(i= m; ; i++){
+        if(isprime(i)){
+            return i;
+        }
+    }
+}

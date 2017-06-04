@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include "crc64.h"
 #include "util.h"
+#include "terminal_define.h"
 
 #define LOCK(hdb)   pthread_mutex_lock(&(hdb)->mutex)
 #define UNLK(hdb)   pthread_mutex_unlock(&(hdb)->mutex)
@@ -65,14 +66,14 @@ hdict_t* hdict_open(const char *path, int *hdict_errnop)
 		goto error;
 	}
     /*malloc the idx space*/
-	hdict->idx = (idx_t *)malloc(st.st_size);
+	hdict->idx_num = (st.st_size - sizeof(meta_t) - sizeof(uint64_t)) / sizeof(hdict->idx[0]);
+	hdict->idx = (idx_t *)malloc(hdict->idx_num * sizeof(hdict->idx[0]));
 	if (hdict->idx == NULL) {
 		*hdict_errnop = EHDICT_OUT_OF_MEMERY;
 		goto error;
 	}
 
     /* load the idx data to memory*/
-	hdict->idx_num = (st.st_size - sizeof(meta_t) - sizeof(uint64_t)) / sizeof(hdict->idx[0]);
 	if (fread(hdict->idx, sizeof(hdict->idx[0]), hdict->idx_num, fp) != hdict->idx_num) {
         fprintf(stderr, "open idx %s fail idx_num:%d\n", pathname, hdict->idx_num);
 		*hdict_errnop = EHDICT_BAD_FILE;
@@ -103,13 +104,14 @@ error:
 /***
  * find the key in the idx by binary search then return the offset and length of the value
  */
-int hdict_seek(hdict_t *hdict, uint64_t key, off_t *off, uint32_t *length)
+int hdict_seek(hdict_t *hdict, const char* str_key, off_t *off, uint32_t *length)
 {
 	uint32_t low = 0;
 	uint32_t high = hdict->idx_num;
 	uint32_t mid;
 	int hit = 0;
     int count = 0;
+    uint64_t key = strtoull(str_key, NULL, 10);
 	while (low < high) {
         ++count;
 		mid = (low + high) / 2;
@@ -127,9 +129,53 @@ int hdict_seek(hdict_t *hdict, uint64_t key, off_t *off, uint32_t *length)
 	return hit;
 }
 
-int hdict_search(hdb_t *hdb, const char* label, uint64_t key, off_t *off, uint32_t *length, hdict_t **hdict){
+int hdict_seek_v2(hdict_t *hdict, const char* str_key, off_t *off, uint32_t *length){
+	uint32_t low = -1;
+	uint32_t high = hdict->idx_num;
+	uint32_t mid;
+	int hit = 0;
+    int count = 0;
+    char buf[DATA_BUFFER_SIZE];
+    uint64_t key = bkdr_hash(str_key);
+	while (low + 1 != high) {
+        ++count;
+		mid = (low + high) / 2;
+		if (key > hdict->idx[mid].key) {
+			low = mid;
+		} else {
+			high = mid;
+		} 
+    }
+     
+    if(high >= hdict->idx_num || hdict->idx[high].key != key){
+        return hit;
+    }
+    size_t len = strlen(str_key);
+    while(high < hdict->idx_num){
+	    *off = (hdict->idx[high].pos & 0xFFFFFFFFFF);
+	    *length = (hdict->idx[high].pos >> 40);
+        //compare the string key
+        int res = hdict_read(hdict, buf, *length, *off);
+        if (res != *length){
+            return hit;
+        }
+        if (res > len && strncmp(buf, str_key, len) == 0 && buf[len] == ':'){
+            *off = *off + len + 1;
+            *length = *length - len - 1;
+            hit = 1;
+            return hit;
+        }
+        high++;
+        if(hdict->idx[high].key != key){
+            return hit;
+        }
+    }
+    return hit;
+}
+
+int hdict_search(hdb_t *hdb, const char* label, const char* key, off_t *off, uint32_t *length, hdict_t **hdict){
     int hit = 0;
-    if (NULL == label){
+    if (NULL == label || NULL == key){
         return hit;
     }
     hdict_t *hd;
@@ -142,7 +188,11 @@ int hdict_search(hdb_t *hdb, const char* label, uint64_t key, off_t *off, uint32
         if (hd->hdid == hdid) {
             hd->ref++;
             *hdict = hd;
-            hit = hdict_seek(*hdict, key, off, length);
+            if (hd->hdict_meta->idx_type == 2){
+                hit = hdict_seek_v2(*hdict, key, off, length);
+            }else{
+                hit = hdict_seek(*hdict, key, off, length);
+            }
             (*hdict)->num_qry++;
             if (hit){
                 hd->ref--;

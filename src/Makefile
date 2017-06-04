@@ -15,7 +15,7 @@ TARGET = terminal index_create
 
 ### Objects. ###
 OBJS1 = crc64.o hdict.o connection.o connection_queue.o network.o util.o terminal.o
-OBJS2 = idx_create.o crc64.o
+OBJS2 = idx_create.o crc64.o util.o
 
 all : $(TARGET)
 
