@@ -2,7 +2,7 @@
   terminal是一个支持memcache协议的key-value数据库, 可以在线挂载多个静态数据存储, 很适合用于推荐引擎存储离线计算的候选集及非实时更新的大批量数据。 它不支持写操作, 只能用于进行静态数据存储, 但是它可以批量的动态载入线下生成的数据文件，这样可以减少更新大批量数据写入对系统造成的影响, 最大程度的降低写放大对磁盘的损耗。
   terminal结合使用内存和硬盘, 内存只用来存储索引文件, 硬盘则用来存储真正的数据文件. 很大程度上减少对机器内存的消耗。
 
-  terminal的每个库由数据文件和索引文件组成, 数据文件命名为dat, 索引文件命名为idx,  索引文件由一个个key-pos对组成. 其中key就是key-value结构中需要查询的key(1.0版本现在只支持整数类型的key, 后续会支持字符串类型的key), 而pos则包含两部分信息, 它的前40位表示value在dat文件中的偏离值off, 后20位表示value的长度length, 通过off和length来共同定位dat文件中的value
+  terminal的每个库由数据文件和索引文件组成, 数据文件命名为dat, 索引文件命名为idx,  索引文件由一个个key-pos对组成. 其中key就是key-value结构中需要查询的key, 而pos则包含两部分信息, 它的前40位表示value在dat文件中的偏离值off, 后20位表示value的长度length, 通过off和length来共同定位dat文件中的value, 当前版本支持Integer和String的key, Integer类型key的查询相对于String类型的要快一些。
 
 # 使用方法
 
@@ -72,8 +72,23 @@
     1. 有一个原始的数据文件dat, 每行都是key-value结构, 用:分隔, key必须为整数
     2. 如果数据文件的key是无序的, 可以先将数据文件中的key按数字进行排序
     3. 使用编译生成的index_create程序生成索引文件
+    生成Integer类型key的索引文件：
+    ```
     ./index_create -i <dat> -o <idx> -l <label>
-    <dat> 为要生成索引的数据文件，idx是生成索引文件的路径，label是库的标识
+    
+    <dat> 为要生成索引的数据文件
+    idx是生成索引文件的路径
+    label是库的标识
+    ```
+    生成String类型key的索引文件：
+    ```
+    ./index_create -i <dat> -o <idx> -l <label> -s -n <keys num>
+    
+    dat 为要生成索引的数据文件
+    idx是生成索引文件的路径
+    label是库的标识
+    keys num是dat文件中包含key的个数
+    ```
 
 # 支持命令
   - info

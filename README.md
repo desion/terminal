@@ -1,7 +1,7 @@
 # Introduction [中文](https://github.com/desion/terminal/blob/master/README_CN.md)
   Terminal is a persistent huge storage service , compatible with the majority of memcached interfaces (get,stats). With the huge amount of data stored,  Except huge storage capacity, Terminal also support load huge data one time, it can load many db and append data to the existed db, when there is the same key in the new version and old version Terminal will return the value with new version. Terminal is very useful for the recommend system.
   
-  Terminal's db is composed of memory and disk, the index will load into memory and the dat will store in disk, so it can save much memory. The data file name dat,and the index file name idx. The idx file is composed of many key-pos pairs. In version 1.0 the key only support integer,we will support string key in the new version.
+  Terminal's db is composed of memory and disk, the index will load into memory and the dat will store in disk, so it can save much memory. The data file name dat,and the index file name idx. The idx file is composed of many key-pos pairs. Current version support Integer keys and string keys. The Integer keys is faster than string keys.
 
   this is base on [lushan](https://github.com/wbrecom/lushan)
 
@@ -75,9 +75,19 @@
     1. give the dat file that is composed of key-value lines, the line should be split by :, and the key must be integer in version 1.0
     2. the dat file should be sorted by the key
     3. you can use the binary file index_create to make the idx file
+    for integer key:
+    ```
     ./index_create -i <dat> -o <idx> -l <label>
     <dat> is the data file,<idx> is the index file will be generated,<label> is the flag of db
-
+    ```
+    for string key
+    ```
+    ./index_create -i <dat> -o <idx> -l <label> -s -n <key number>
+    <dat> is the data file
+    <idx> is the index file will be generated
+    <label> is the flag of db
+    <key number> is the number of keys in the dat file
+    ```
 # Support Commands
   - info
 
