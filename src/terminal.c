@@ -405,7 +405,7 @@ int main(int argc, char* argv[]){
     }
 
     srand(time(NULL)^getpid());
-    enev_init();
+    //enev_init();
 
     if (settings.daemonize) {
         int res;

@@ -11,28 +11,30 @@
 #define BUF_SIZE 255
 
 typedef struct {
-	uint64_t key;
-	uint64_t pos;
+    uint64_t key;
+    uint64_t pos;
 } idx_t;
-
-typedef struct {
+#pragma pack(1)
+struct meta_t{
     uint32_t version;       //the version of idx
-    uint8_t idx_type;       //the type of idx,binary search of hash
-    char label[24];         //the name of db
-} meta_t;
+    uint8_t idx_type;      //the type of idx,binary search of hash
+    char label[15];         //the name of db
+};
+#pragma pack()
+typedef struct meta_t meta_t;
 
 typedef struct hdict_t hdict_t;
 struct hdict_t {
-	TAILQ_ENTRY(hdict_t) link;
-	LIST_ENTRY(hdict_t) h_link;
-	char *path;
-	uint32_t idx_num;
-	idx_t *idx;
-	int fd;
-	time_t open_time;
-	uint32_t num_qry;
-	uint32_t ref;
-	uint64_t hdid;
+    TAILQ_ENTRY(hdict_t) link;
+    LIST_ENTRY(hdict_t) h_link;
+    char *path;
+    uint32_t idx_num;
+    idx_t *idx;
+    int fd;
+    time_t open_time;
+    uint32_t num_qry;
+    uint32_t ref;
+    uint64_t hdid;
     meta_t *hdict_meta;
 };
 
@@ -42,15 +44,17 @@ TAILQ_HEAD(hdict_list_t, hdict_t);
 #define HASH(dict_id)  ((dict_id) % HTAB_SIZE)
 #define STR_HASH(key)  ((bkdr_hash(key)) % HTAB_SIZE)
 
-typedef struct hdb_t hdb_t;
+#pragma pack(2)
 struct hdb_t {
-	pthread_mutex_t mutex;
-	struct hdict_list_t open_list;
-	struct hdict_list_t close_list;
-	int num_open;
-	int num_close;
-	LIST_HEAD(, hdict_t) htab[HTAB_SIZE];
+    pthread_mutex_t mutex;
+    struct hdict_list_t open_list;
+    struct hdict_list_t close_list;
+    int num_open;
+    int num_close;
+    LIST_HEAD(dblist, hdict_t) htab[HTAB_SIZE];
 };
+#pragma pack()
+typedef struct hdb_t hdb_t;
 
 #define EHDICT_OUT_OF_MEMERY	-1
 #define EHDICT_BAD_FILE		-2

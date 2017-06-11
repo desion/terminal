@@ -95,6 +95,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
+    fprintf(stderr, "version:%u idx_type:%d label:%s crc:%lu\n", idx_meta.version, idx_meta.idx_type, idx_meta.label, crc);
     fwrite(&idx_meta, sizeof(idx_meta), 1, out_fp);
     fwrite(&crc, sizeof(uint64_t), 1, out_fp);
 
